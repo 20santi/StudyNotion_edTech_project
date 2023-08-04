@@ -10,12 +10,12 @@ export default function Home() {
             {/* section 1 */}
             <div className="flex flex-col pt-28 items-center">
                 <div className="flex flex-col items-center gap-y-9">
-                    
+                    <Link to={"/login"}>
                         <IconButton 
                             text={"Become an Instructor"}
                             customClass={"text-[16px] leading-6 font-inter font-semibold text-richblack-200 rounded-lg bg-richblack-800 w-[235px] h-[44px] shadow-[0px_1px_0px_0px_rgba(255,255,255,0.18)]"}
                         />
-                
+                    </Link>
 
                     <div className="flex flex-col gap-y-5 items-center w-[820px] text-center">
                         <p className="text-richblack-5 text-[36px] leading-[44px] font-inter font-semibold">

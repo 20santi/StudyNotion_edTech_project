@@ -1,15 +1,21 @@
 import React from "react";
 import Template from "../components/Core/Auth/Template";
+import image from "../assets/Images/login.webp";
+import frameImage from "../assets/Images/frame.png";
 
 export default function Login() {
   return (
-    <div className="w-[508px]">
+    <div className="">
+      <div className="">
       <Template
         header={"Welcome Back"}
-        text={"Build skills for today, tomorrow, and beyond."}
-        spanText={"Education to future-proof your career."}
-        formType={"login"}
+        text={"Discover your passions, "}
+        spanText={"Be Unstoppable"}
+        formType="login"
+        image={image}
+        frameImage={frameImage}
       />
+    </div>
     </div>
   );
 }

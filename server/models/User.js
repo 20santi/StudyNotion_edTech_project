@@ -33,6 +33,18 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Course",
   },
+  image: {
+    type: String,
+    required: true,
+  },
+  accountType: {
+    type: String,
+    required: true,
+    enum: ["Admin", "Student", "Instructor"],
+  },
+  token:{
+    type:String,
+  }
 });
 
 module.exports = mongoose.model("User", userSchema);

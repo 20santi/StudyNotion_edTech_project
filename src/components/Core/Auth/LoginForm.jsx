@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import Tab from "../../../Comon/Tab";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { login } from "../../../services/operators/authApi";
 
 export default function LoginForm() {
@@ -65,7 +65,7 @@ export default function LoginForm() {
           )}
         </div>
 
-        <div className="flex flex-col">
+        <div className="flex flex-col relative">
           <label
             htmlFor="password"
             className="font-inter font-400 text-[14px] text-richblack-5 leading-[22px]"
@@ -84,6 +84,12 @@ export default function LoginForm() {
           {errors.message && (
             <span className=" text-pink-200">Password is required</span>
           )}
+
+          <Link to="/forgot-password">
+            <div className="font-inter font-bold text-xs text-blue-100 absolute right-0 -bottom-6">
+              Forgot Password
+            </div>
+          </Link>
         </div>
 
         <button

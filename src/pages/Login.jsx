@@ -5,8 +5,8 @@ import frameImage from "../assets/Images/frame.png";
 
 export default function Login() {
   return (
-    <div className="">
-      <div className="">
+    <div>
+      <div>
       <Template
         header={"Welcome Back"}
         text={"Discover your passions, "}

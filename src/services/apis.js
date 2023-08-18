@@ -10,10 +10,13 @@ export const endPoints = {
 }
 
 export const courseEndPoints = {
-    SHOW_ALL_CATEGORY_API: BASE_URL + "/course/showAllCategory"
+    SHOW_ALL_CATEGORY_API: BASE_URL + "/course/showAllCategory",
+    CREATE_COURSE_API: BASE_URL + "/course/createCourse"
 }
 
 export const profileEndPoints = {
-    IMAGE_UPLOAD_API: BASE_URL + "/profile/profileUpload"
+    IMAGE_UPLOAD_API: BASE_URL + "/profile/profileUpload",
+    PROFILE_UPDATE_API: BASE_URL + "/profile/profileUpdate",
+    PASSWORD_UPDATE_API: BASE_URL + "/profile/updatePassword"
 }
 

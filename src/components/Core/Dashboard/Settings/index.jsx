@@ -6,6 +6,7 @@ import { profileUpload } from "../../../../services/operators/profile";
 import { setLoading } from "../../../../slices/authSlice";
 import EditProfile from "../EditProfile";
 import EditPassword from "../EditPassword";
+import DeleteAccount from "../DeleteAccount";
 
 export default function Setting() {
   const { user } = useSelector((state) => state.profile);
@@ -120,6 +121,9 @@ export default function Setting() {
 
         {/* edit password */}
         <EditPassword/>
+
+        {/* delete account */}
+        <DeleteAccount/>
 
       </div>
     </div>

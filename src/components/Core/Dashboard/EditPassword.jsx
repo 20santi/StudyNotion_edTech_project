@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { passwordUpdate } from "../../../services/operators/profile";
+import { toast } from "react-hot-toast";
 
 export default function EditPassword() {
 
@@ -17,11 +19,16 @@ export default function EditPassword() {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const {token} = useSelector((state) => state.auth);
+    const {user} = useSelector((state) => state.profile);
 
 
-    const handleOnSubmit = () => {
-
+    const handleOnSubmit = (data) => {
+        if(data.newPassword !== data.confirmPassword) {
+            toast.error("Confirm password not match")
+            return;
+        }
+        
+        dispatch(passwordUpdate(user._id, data.oldPassword, data.newPassword))
     }
 
     return (

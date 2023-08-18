@@ -54,7 +54,7 @@ export default function Navbar() {
   };
 
   return (
-    <div className="w-full h-[64px] bg-richblack-800 fixed flex items-center border border-richblack-700">
+    <div className="w-full h-[64px] bg-richblack-800 fixed z-50 flex items-center border border-richblack-700">
       <div className="w-11/12 max-w-maxContent mx-auto flex justify-between">
         <div>
           <img

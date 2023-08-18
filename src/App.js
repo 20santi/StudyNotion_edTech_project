@@ -14,8 +14,14 @@ import EnrolledCourses from "./components/Core/Dashboard/EnrolledCourses";
 import PrivateRoute from "./components/Core/Auth/Privateroute";
 import MyProfile from "./components/Core/Dashboard/MyProfile";
 import Setting from "./components/Core/Dashboard/Settings";
+import { useSelector } from "react-redux";
+import AddCourse from "./components/Core/Dashboard/AddCourse";
 
 function App() {
+
+  const {user} = useSelector((state) => state.profile);
+  const { token } = useSelector((state) => state.auth);
+
   return (
     <div className="w-screen min-h-screen bg-richblack-900 flex flex-col">
       <div>
@@ -41,6 +47,12 @@ function App() {
           <Route path="dashboard/my-profile" element={<MyProfile/>}/>
           <Route path="dashboard/settings" element={<Setting/>}/>
           <Route path="dashboard/enrolled-courses" element={<EnrolledCourses/>}/>
+
+          { token && (
+            user.accountType === "Instructor" && (
+              <Route path="dashboard/add-course" element={<AddCourse/>}/>
+            ))
+          }
         </Route>
       </Routes>
     </div>

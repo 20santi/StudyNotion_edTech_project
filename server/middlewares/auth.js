@@ -15,12 +15,10 @@ exports.auth = async (req, res, next) => {
         message: "Token is missing",
       });
     }
-    console.log("token: ----> ", token);
 
     //verify the token
     try {
       const decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
-      console.log("token:---------> ", decode);
       req.user = decode;
     } catch (error) {
       console.log("error while decode token in auth middleware: ", error);

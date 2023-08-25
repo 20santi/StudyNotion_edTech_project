@@ -39,7 +39,7 @@ export default function Navbar() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const fetchedCategories = await dispatch(showAllCategory());
+        const fetchedCategories = await showAllCategory();
         setCategories(fetchedCategories);
       } catch (error) {
         console.error("Error fetching categories:", error);

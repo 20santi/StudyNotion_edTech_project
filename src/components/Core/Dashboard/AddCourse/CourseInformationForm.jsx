@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { ImCross } from "react-icons/im";
 import Upload from "./Upload";
 import { useDispatch, useSelector } from "react-redux";
 import Requirements from "./Requirerments";
-import { setCourse } from "../../../../slices/courseSlice";
-import { createCourse, showAllCategory } from "../../../../services/operators/courseDetails";
+import { setCourse, setStep } from "../../../../slices/courseSlice";
+import {
+  createCourse,
+  showAllCategory,
+} from "../../../../services/operators/courseDetails";
 import { setLoading } from "../../../../slices/authSlice";
+import InputTags from "./InputTags";
 
 export default function CourseInformationForm() {
-  const [tags, setTags] = useState([]);
   const [categories, setCatgories] = useState([]);
   const { editCourse } = useSelector((state) => state.course);
   const { token } = useSelector((state) => state.auth);
@@ -23,33 +25,11 @@ export default function CourseInformationForm() {
     getValues,
   } = useForm();
 
-  // tag handler
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter" || event.key === ",") {
-      event.preventDefault();
-      const tagValue = event.target.value;
-
-      if (tagValue && !tags.includes(tagValue)) {
-        const newTag = [...tags, tagValue];
-        setTags(newTag);
-      }
-
-      console.log(event.target.value);
-      event.target.value = "";
-    }
-  };
-
-  // remove tag after click cross button
-  const removeTag = (idx) => {
-    const tag = tags.filter((_, index) => index !== idx);
-    setTags(tag);
-  };
-
   useEffect(() => {
-    const getCategories = async() => {
+    const getCategories = async () => {
       const result = await showAllCategory();
       setCatgories(result);
-    }
+    };
 
     getCategories();
   }, []);
@@ -60,24 +40,27 @@ export default function CourseInformationForm() {
     formData.append("courseDescription", data.courseDescription);
     formData.append("price", data.price);
     formData.append("category", data.category);
-    formData.append("tag", data.tag);
+    formData.append("tag", JSON.stringify(data.tag));
     formData.append("image", data.image);
     formData.append("benefits", data.benefits);
-    formData.append("instructions", data.instructions);
+    formData.append("instructions", JSON.stringify(data.instructions));
 
-    setLoading(false);
+    setLoading(true);
     const result = await createCourse(formData, token);
-    if(result) {
-      dispatch(setCourse(result));
-      dispatch(setCourse(2));
+    
+    if (result) {
+      dispatch(setCourse(result.data.data));
+      dispatch(setStep(2));
     }
     setLoading(false);
-    console.log("printing result -> ", result);
   };
 
   return (
     <div>
-      <form onSubmit={handleSubmit(onFormSubmit)} className="flex flex-col mt-6 gap-y-7 w-[665px] bg-richblack-800 border border-richblack-700 rounded-lg p-6">
+      <form
+        onSubmit={handleSubmit(onFormSubmit)}
+        className="flex flex-col mt-6 gap-y-7 w-[665px] bg-richblack-800 border border-richblack-700 rounded-lg p-6"
+      >
         <div>
           <label htmlFor="courseName">
             Course Title<span className=" text-pink-200"> *</span>
@@ -147,51 +130,27 @@ export default function CourseInformationForm() {
                                 leading-[24px] text-richblack-200 rounded-[8px] bg-richblack-700 opacity-[0.9]
                                 shadow-[0_1px_0px_0px_rgba(255,255,255,0.18)]"
           >
-            {
-              categories.map((categry, index) => {
-                return (
-                  <option key={index}>
-                    {categry}
-                  </option>
-                )
-              })
-            }
+            <option>
+              Choose Category
+            </option>
+            {categories.map((category, index) => {
+              return (
+                <option key={category._id} value={category._id}>
+                  {category.name}
+                </option>
+              );
+            })}
           </select>
           {errors.category && <span>tag is required</span>}
         </div>
 
-        <div>
-          <label htmlFor="tag">
-            Tags<span className=" text-pink-200"> *</span>
-          </label>
-          <input
-            type="text"
-            id="tag"
-            defaultValue=""
-            onKeyDown={handleKeyDown}
-            placeholder="Choose a Tag"
-            name="tag"
-            {...register("tag", { required: true })}
-            className="w-full h-[40px] p-3 mt-[6px] font-inter font-bold text-[12px]
-                                leading-[24px] text-richblack-200 rounded-[8px] bg-richblack-700 opacity-[0.9]
-                                shadow-[0_1px_0px_0px_rgba(255,255,255,0.18)]"
-          />
-          {errors.tag && <span>Tag is required</span>}
-
-          <div className="mt-4 flex gap-x-3">
-            {tags.map((data, index) => (
-              <div
-                key={index}
-                className={`w-[${data.length}px] p-3 h-[30px] rounded-full bg-yellow-900 border border-yellow-50 text-yellow-50 flex items-center justify-center gap-x-2`}
-              >
-                <p className="">{data}</p>
-                <button onClick={() => removeTag(index)}>
-                  <ImCross className="text-[12px]" />
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
+        <InputTags
+          register={register}
+          id="tag"
+          name="tag"
+          setValue={setValue}
+          errors={errors}
+        />
 
         <Upload
           register={register}

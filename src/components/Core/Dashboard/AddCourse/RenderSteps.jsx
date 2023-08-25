@@ -2,6 +2,8 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { TfiCheck } from "react-icons/tfi";
 import CourseInformationForm from "./CourseInformationForm";
+import CourseBuilder from "./CourseBuilder";
+import {FaCheck} from "react-icons/fa";
 
 export default function RenderSteps() {
   const { step } = useSelector((state) => state.course);
@@ -24,7 +26,7 @@ export default function RenderSteps() {
                 step > data.id 
                 ? (
                     <div className="flex rounded-full w-[34px] h-[34px] bg-yellow-50 text-richblue-900 items-center justify-center">
-                        <TfiCheck/>
+                        <FaCheck/>
                     </div>
                 )
                 : (
@@ -42,7 +44,7 @@ export default function RenderSteps() {
 
               <p
                 className={`${
-                  step === data.id ? "text-richblack-5" : "text-richblack-500"
+                  step >= data.id ? "text-richblack-5" : "text-richblack-500"
                 }`}
               >
                 {data.title}
@@ -55,9 +57,8 @@ export default function RenderSteps() {
       <div className={`border-b border-dashed w-[220px] absolute top-4 left-[88px] ${step > 1 ? ("border-yellow-50") : ("border-richblack-700")}`}></div>
       <div className={`border-b border-dashed w-[220px] border-richblack-700 absolute top-4 left-[343px] ${step > 2 ? ("border-yellow-50") : ("border-richblack-700")}`}></div>
     
-        {
-            step === 1 && <CourseInformationForm/>
-        }
+        { step === 1 && <CourseInformationForm/> }
+        { step === 2 && <CourseBuilder/> }
     
     </div>
   );

@@ -7,7 +7,11 @@ exports.connect = () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     })
-    .then(() => console.log("DB connected successfully"))
+    .then(() => {
+      console.log("DB connected successfully");
+    
+      require('../models/Subsection'); 
+    })
     .catch((error) => {
       console.log("DB connected issue");
       console.error(error);

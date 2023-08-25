@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Player } from "video-react";
 import { FiUploadCloud } from "react-icons/fi";
@@ -14,6 +14,7 @@ export default function Upload({
 }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
+  const inputRef = useRef(null);
 
   const onDrop = (files) => {
     const file = files[0];
@@ -47,7 +48,7 @@ export default function Upload({
   });
 
   return (
-    <div className="flex flex-col space-y-2">
+    <div className="flex flex-col space-y-2 w-[601px] h-[190px]">
       <label className="text-sm text-richblack-5" htmlFor={name}>
         {label} <sup className="text-pink-200">*</sup>
       </label>
@@ -65,7 +66,7 @@ export default function Upload({
               className="h-full w-full rounded-md object-cover"
             />
           ) : (
-            <Player aspectRatio="16:9" playsInline src={imageUrl} />
+            <Player aspectRatio="16:9" playsInline src={imageUrl}/>
           )}
           <button
             type="button"
@@ -84,7 +85,7 @@ export default function Upload({
           className="flex w-full flex-col items-center p-6"
           {...getRootProps()}
         >
-          <input {...getInputProps()} />
+          <input {...getInputProps()} ref={inputRef}/>
           <div className="grid aspect-square w-14 place-items-center rounded-full bg-pure-greys-800">
             <FiUploadCloud className="text-2xl text-yellow-50" />
           </div>

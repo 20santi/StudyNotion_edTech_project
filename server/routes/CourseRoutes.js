@@ -14,7 +14,7 @@ router.post("/createCourse",auth, isInstructor, createCourse);
 router.post("/editCourse",auth, isInstructor, editCourse);
 router.post("/fetchCourse",auth, isInstructor, fetchCourse);
 router.get("/getAllCourses",auth, isInstructor, fetchAllCourses);
-//router.post("/deleteCourse",auth, isInstructor, deleteCourse);
+router.post("/deleteCourse",auth, isInstructor, deleteCourse);
 
 router.post("/createSection",auth, isInstructor, createSection);
 router.put("/editSection",auth, isInstructor, editSection);

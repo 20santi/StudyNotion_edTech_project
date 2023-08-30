@@ -14,7 +14,7 @@ const {
   EDIT_COURSE_API,
   FETCH_ALL_COURSES,
   FETCH_COURSE_DETAILS_API,
-  //DELETE_COURSE_API
+  DELETE_COURSE_API
 } = courseEndPoints;
 
 export async function showAllCategory() {
@@ -95,21 +95,20 @@ export async function fetchCourseDetails(courseID, token) {
   return result;
 }
 
-// export async function deleteCourse(courseId, token) {
-//   const toastId = toast.loading("Loading...");
-//   try {
-//     const response = await apiConnector("POST", DELETE_COURSE_API, {courseId}, {
-//       Authorization: `Bearer ${token}`
-//     })
-//     console.log("DELETE_COURSE_API response: ", response);
-//     result = response?.data?.data;
-//     toast.success("Course deleted successfully");
-//   } catch(error) {
-//     console.log("DELETE_COURSE_API error: ", error);
-//     toast.error("Course could not delete");
-//   }
-//   toast.dismiss(toastId);
-// }
+export async function deleteCourse(courseId, token) {
+  const toastId = toast.loading("Loading...");
+  try {
+    const response = await apiConnector("POST", DELETE_COURSE_API, {courseId}, {
+      Authorization: `Bearer ${token}`
+    })
+    console.log("DELETE_COURSE_API response: ", response);
+    toast.success("Course deleted successfully");
+  } catch(error) {
+    console.log("DELETE_COURSE_API error: ", error);
+    toast.error("Course could not delete");
+  }
+  toast.dismiss(toastId);
+}
 
 export async function getAllCourses(token) {
   const toastId = toast.loading("Loading...");

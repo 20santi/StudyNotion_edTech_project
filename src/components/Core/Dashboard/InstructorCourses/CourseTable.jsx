@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Table, Thead, Tbody, Tr, Th, Td } from "react-super-responsive-table";
 import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 import { IoMdAddCircleOutline } from "react-icons/io";
-import { getAllCourses } from "../../../../services/operators/courseDetails";
+import { deleteCourse, getAllCourses } from "../../../../services/operators/courseDetails";
 import { HiClock } from "react-icons/hi";
 import { BsPatchCheckFill } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,6 +27,12 @@ const CourseTable = () => {
     fetchCourses();
   }, []);
 
+  const handleDelete = async(courseId, index) => {
+    await deleteCourse(courseId, token);
+    const result = await getAllCourses(token);
+    setCourses(result);
+  }
+
   return (
     <div className="w-screen ">
       <div className="w-11/12 max-w-maxContent mx-auto flex flex-col gap-y-8">
@@ -34,7 +40,9 @@ const CourseTable = () => {
           <h1 className=" text-3xl font-inter font-semibold text-richblack-5">
             My Courses
           </h1>
-          <button className="flex items-center justify-center w-[109px] h-[48px] mt-4 gap-x-2 text-richblack-900 bg-yellow-50 rounded-lg">
+          <button 
+            onClick={() => navigate("/dashboard/add-course")}
+          className="flex items-center justify-center w-[109px] h-[48px] mt-4 gap-x-2 text-richblack-900 bg-yellow-50 rounded-lg">
             <IoMdAddCircleOutline className="text-xl text-richblue-900" />
             <p className="text-base font-medium text-richblue-900">New</p>
           </button>
@@ -69,7 +77,7 @@ const CourseTable = () => {
                   </Td>
                 </Tr>
               ) : (
-                courses.map((course) => (
+                courses.map((course, index) => (
                   <Tr
                     key={course._id}
                     className="flex gap-x-16 border-b text-white border-richblack-800 px-6 py-8"
@@ -114,8 +122,14 @@ const CourseTable = () => {
                       <MdEdit/>
                       </button>
                     </Td>
-                    <Td className="text-xl text-richblack-100 -translate-x-4">
+                    <Td>
+                    <button 
+                        className="text-xl text-richblack-100 -translate-x-4"
+                        disabled={loading}
+                        onClick={() => handleDelete(course._id, index)}
+                      >
                       <RiDeleteBin6Line/>
+                      </button>
                     </Td>
                   </Tr>
                 ))

@@ -1,4 +1,6 @@
 const Course = require("../models/Course");
+const Section = require("../models/Section");
+const Subsection = require("../models/Subsection");
 const { uploadImage } = require("../utils/imageUploader");
 
 exports.createCourse = async (req, res) => {
@@ -79,15 +81,15 @@ exports.editCourse = async (req, res) => {
       benefits,
       instructions,
       courseId,
-      status
+      status,
     } = req.body;
 
     //fetch thumbnail
-      var image = null;
-      if(req.files) {
-        const { Image } = req.files.image;
-        image = Image;
-      }
+    var image = null;
+    if (req.files) {
+      const { Image } = req.files.image;
+      image = Image;
+    }
 
     if (!courseId) {
       return res.status(404).json({
@@ -119,7 +121,7 @@ exports.editCourse = async (req, res) => {
     if (instructions) {
       newCourse.instructions = instructions;
     }
-    if(status) {
+    if (status) {
       newCourse.activeStatus = status;
     }
     if (image) {
@@ -140,121 +142,139 @@ exports.editCourse = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Course updated successfully",
-      data: updateCourse
-    })
+      data: updateCourse,
+    });
   } catch (error) {
     console.log("Error while update course in course controller: ", error);
     return res.status(500).json({
       success: false,
-      message: "Course could no edit."
-    })
+      message: "Course could no edit.",
+    });
   }
 };
 
 exports.fetchCourse = async (req, res) => {
   try {
     const { courseID } = req.body;
-    if(!courseID) {
+    if (!courseID) {
       return res.status(400).json({
         success: false,
-        message: "Course ID is not fetch from request body"
-      })
+        message: "Course ID is not fetch from request body",
+      });
     }
 
-    const courseDetails = await Course.findById(courseID)
-    .populate({
+    const courseDetails = await Course.findById(courseID).populate({
       path: "section",
       populate: {
-        path: "subsection"
-      }
-    })
+        path: "subsection",
+      },
+    });
     console.log("Course id in controller: ", courseID);
 
-    if(!courseDetails) {
+    if (!courseDetails) {
       return res.status(500).json({
         success: false,
         message: "Course not found",
-      })
+      });
     }
 
     return res.status(200).json({
       success: true,
       message: "Course fetch successfully",
-      data: courseDetails
-    })
+      data: courseDetails,
+    });
   } catch {
     return res.status(500).json({
       success: false,
-      message: "Course details could not fetch"
-    })
+      message: "Course details could not fetch",
+    });
   }
-}
+};
 
 exports.fetchAllCourses = async (req, res) => {
   try {
     const instructorId = req.user.id;
-    if(!instructorId) {
+    if (!instructorId) {
       return res.status(404).json({
         success: false,
-        message: "Instructor id is not found"
-      })
+        message: "Instructor id is not found",
+      });
     }
-    const courses = await Course.find({instructor: instructorId});
-    if(!courses) {
+    const courses = await Course.find({ instructor: instructorId });
+    if (!courses) {
       return res.status(404).json({
         success: false,
-        message: "Courses not found"
-      })
+        message: "Courses not found",
+      });
     }
 
     return res.status(200).json({
       success: true,
       message: "Courses are fetched successfully",
-      data: courses
-    })
-  } catch(error) {
-    console.log("Error while fetched all courses in course controller: ", error);
+      data: courses,
+    });
+  } catch (error) {
+    console.log(
+      "Error while fetched all courses in course controller: ",
+      error
+    );
     return res.status(500).json({
       success: false,
-      message: "Courses could not fetched"
-    })
+      message: "Courses could not fetched",
+    });
   }
-}
+};
 
-// exports.deleteCourse = async (req, res) => {
-//   try {
-//       const { courseId } = req.body;
-//       if(!courseId) {
-//           return res.status(404).json({
-//               success: false,
-//               message: "Course ID is not present"
-//           })
-//       }
-//       // find course 
-//       const course = await Course.findById(courseId);
+exports.deleteCourse = async (req, res) => {
+  try {
+    const { courseId } = req.body;
+    if (!courseId) {
+      return res.status(404).json({
+        success: false,
+        message: "Course ID is not present",
+      });
+    }
+    // find course
+    const course = await Course.findById(courseId).populate({
+      path: "section",
+      populate: {
+        path: "subsection",
+      },
+    });
+    if (!course) {
+      return res.status(404).json({
+        success: false,
+        message: "Course is not find",
+      });
+    }
 
-//       // delete section and subsection
-//       for(let i; i<course.section.length; i++) {
-//           for(let j; j<i.subsection.length; j++) {
-//               await SubSection.findByIdAndDelete(j._id);
-//           }
-//           await Section.findByIdAndDelete(i._id);
-//       }
+    // delete section and subsection
+    for (let i = 0; i < course?.section.length; i++) {
+      const sectionId = course.section[i]._id;
+      console.log("Section id: ", sectionId);
 
-//       // delete course
-//       await Course.findByIdAndDelete(courseId);
-      
-//       //return response
-//       return res.status(200).json({
-//           success: true,
-//           message: "Course delted successfully"
-//       })
+      for (let j = 0; j < course?.section[i]?.subsection.length; j++) {
+        const subsectionId = course.section[i].subsection[j]._id;
+        console.log("Subsection id: ", subsectionId);
+        await Subsection.findByIdAndDelete(subsectionId);
+      }
 
-//   } catch(error) {
-//       console.log("Error while delete course in course controller: ", course);
-//       return res.status(500).json({
-//           success: false,
-//           message: "Course could not delete"
-//       })
-//   }
-// }
+      await Section.findByIdAndDelete(sectionId);
+    }
+
+    // delete course
+    await Course.findByIdAndDelete(courseId);
+
+    //return response
+    return res.status(200).json({
+      success: true,
+      message: "Course delted successfully",
+    });
+  } catch (error) {
+    console.log("Error while delete course in course controller: ", error);
+    return res.status(500).json({
+      success: false,
+      message: "Course could not delete",
+    });
+  }
+};

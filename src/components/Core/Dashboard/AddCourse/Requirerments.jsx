@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ImCross } from "react-icons/im";
+import { useSelector } from "react-redux";
 
 export default function Requirements({
   name,
@@ -11,6 +12,7 @@ export default function Requirements({
 }) {
   const [requirement, setRequirement] = useState("");
   const [requirementsList, setRequirementsList] = useState([]);
+  const { editCourse, course } = useSelector((state) => state.course);
 
   const add = () => {
     if (requirement) {
@@ -20,6 +22,10 @@ export default function Requirements({
   };
 
   useEffect(() => {
+    if(editCourse) {
+      setRequirementsList(course.instructions);
+    } 
+
     register(name, {required: true, validate: (value) => value.length > 0})
   }, []);
 
@@ -67,7 +73,7 @@ export default function Requirements({
         </div>
         {errors[name] && (
           <span className="ml-2 text-xs tracking-wide text-pink-200">
-            tag is required
+            Instructions is required
           </span>
         )}
       </div>

@@ -2,8 +2,8 @@ import RenderSteps from "./RenderSteps";
 
 export default function AddCourse() {
     return (
-        <div className="text-white w-screen">
-            <div className="flex w-11/12 max-w-maxContent mx-auto justify-between">
+        <div className="w-screen ">
+            <div className="flex w-11/12 max-w-maxContent mx-auto justify-between text-white">
                 <div className="flex flex-col w-[60%]">
                     <h1 className="font-inter font-bold text-richblack-5 text-[30px] leading-[38px] mt-20">
                         Add Course

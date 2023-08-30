@@ -16,43 +16,54 @@ import MyProfile from "./components/Core/Dashboard/MyProfile";
 import Setting from "./components/Core/Dashboard/Settings";
 import { useSelector } from "react-redux";
 import AddCourse from "./components/Core/Dashboard/AddCourse";
+import CourseTable from "./components/Core/Dashboard/InstructorCourses/CourseTable";
+import EditCourse from "./components/Core/Dashboard/EditCourse/insdex";
 
 function App() {
-
-  const {user} = useSelector((state) => state.profile);
+  const { user } = useSelector((state) => state.profile);
   const { token } = useSelector((state) => state.auth);
 
   return (
     <div className="w-screen min-h-screen bg-richblack-900 flex flex-col">
       <div>
-        <Navbar/>
+        <Navbar />
       </div>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="login" element={<Login />} />
-        <Route path="signup" element={<Signup/>}/>
-        <Route path="verify-email" element={<VerifyEmail/>}/>
-        <Route path="forgot-password" element={<ForgotPassword/>}/>
-        <Route path="/conformationPage/:email" element={<ConformationPage/>}/>
-        <Route path="update-password/:id" element={<UpdatePassword/>}/>
-        <Route path="/password-updated" element={<CompleteUpdatePassword/>}/>
-        <Route path="myprofile" element={<MyProfile/>}/>
+        <Route path="signup" element={<Signup />} />
+        <Route path="verify-email" element={<VerifyEmail />} />
+        <Route path="forgot-password" element={<ForgotPassword />} />
+        <Route path="/conformationPage/:email" element={<ConformationPage />} />
+        <Route path="update-password/:id" element={<UpdatePassword />} />
+        <Route path="/password-updated" element={<CompleteUpdatePassword />} />
+        <Route path="myprofile" element={<MyProfile />} />
 
         {/* nested routes */}
-        <Route element={
-          <PrivateRoute>
-            <Dashboard/>
-          </PrivateRoute>
-        }>
-          <Route path="dashboard/my-profile" element={<MyProfile/>}/>
-          <Route path="dashboard/settings" element={<Setting/>}/>
-          <Route path="dashboard/enrolled-courses" element={<EnrolledCourses/>}/>
-
-          { token && (
-            user.accountType === "Instructor" && (
-              <Route path="dashboard/add-course" element={<AddCourse/>}/>
-            ))
+        <Route
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
           }
+        >
+          <Route path="dashboard/my-profile" element={<MyProfile />} />
+          <Route path="dashboard/settings" element={<Setting />} />
+          <Route
+            path="dashboard/enrolled-courses"
+            element={<EnrolledCourses />}
+          />
+
+          {token && user.accountType === "Instructor" && (
+            <>
+              <Route path="dashboard/add-course" element={<AddCourse />} />
+              <Route path="/dashboard/my-courses" element={<CourseTable />} />
+              <Route
+                path="/dashboard/eidt-course/:courseId"
+                element={<EditCourse />}
+              />
+            </>
+          )}
         </Route>
       </Routes>
     </div>

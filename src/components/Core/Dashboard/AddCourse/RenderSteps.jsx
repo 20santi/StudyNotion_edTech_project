@@ -4,6 +4,7 @@ import { TfiCheck } from "react-icons/tfi";
 import CourseInformationForm from "./CourseInformationForm";
 import CourseBuilder from "./CourseBuilder";
 import {FaCheck} from "react-icons/fa";
+import PublishCourse from "./PublishCourse";
 
 export default function RenderSteps() {
   const { step } = useSelector((state) => state.course);
@@ -59,6 +60,7 @@ export default function RenderSteps() {
     
         { step === 1 && <CourseInformationForm/> }
         { step === 2 && <CourseBuilder/> }
+        { step === 3 && <PublishCourse/>}
     
     </div>
   );

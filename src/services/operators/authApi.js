@@ -3,7 +3,6 @@ import { endPoints } from "../apis";
 import { setLoading, setToken } from "../../slices/authSlice";
 import { apiConnector } from "../apiConnector";
 import { setUser } from "../../slices/profileSlice";
-import { useSelector } from "react-redux";
 
 const { SEND_OTP, SIGN_UP, LOGIN, RESET_PASSWORD_TOKEN_API, RESET_PASSWORD_API } = endPoints;
 

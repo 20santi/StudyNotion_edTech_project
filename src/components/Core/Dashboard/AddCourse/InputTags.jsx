@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { ImCross } from "react-icons/im";
+import { useSelector } from "react-redux";
 
 export default function InputTags({ register, id, name, setValue, errors }) {
   const [tags, setTags] = useState([]);
+  const { editCourse, course } = useSelector((state) => state.course);
 
   // tag handler
   const handleKeyDown = (event) => {
@@ -14,11 +16,17 @@ export default function InputTags({ register, id, name, setValue, errors }) {
         const newTag = [...tags, tagValue];
         setTags(newTag);
       }
-
-      console.log(event.target.value);
       event.target.value = "";
     }
   };
+
+  useEffect(() => {
+    if(editCourse) {
+      setTags(course.tag);
+    }
+
+    register(name, {required: true, validate: (value) => value.length > 0});
+  }, [])
 
   // remove tag after click cross button
   const removeTag = (idx) => {
@@ -29,10 +37,6 @@ export default function InputTags({ register, id, name, setValue, errors }) {
   useEffect(() => {
     setValue(name, tags);
   }, [tags]);
-
-  useEffect(() => {
-    register(name, {required: true, validate: (value) => value.length > 0})
-  }, []);
 
   return (
     <div className="">
@@ -50,7 +54,7 @@ export default function InputTags({ register, id, name, setValue, errors }) {
                       leading-[24px] text-richblack-200 rounded-[8px] bg-richblack-700 opacity-[0.9]
                       shadow-[0_1px_0px_0px_rgba(255,255,255,0.18)]"
         />
-        {errors[name] && <span>Tag is required</span>}
+        {errors[name] && <span className=" text-pink-200">Tag is required</span>}
 
         <div className="mt-4 flex gap-x-3">
           {tags.map((data, index) => (

@@ -10,11 +10,23 @@ export const endPoints = {
 }
 
 export const courseEndPoints = {
+    // API for course
     SHOW_ALL_CATEGORY_API: BASE_URL + "/course/showAllCategory",
     CREATE_COURSE_API: BASE_URL + "/course/createCourse",
+    EDIT_COURSE_API: BASE_URL + "/course/editCourse",
+    FETCH_COURSE_DETAILS_API: BASE_URL + "/course/fetchCourse",
+    FETCH_ALL_COURSES: BASE_URL + "/course/getAllCourses",
+    DELETE_COURSE_API: BASE_URL + "/course/deleteCourse",
+
+    // API for section
     CREATE_SECTION_API: BASE_URL + "/course/createSection",
+    DELETE_SECTION_API: BASE_URL + "/course/deleteSection",
+    EDIT_SECTION_API: BASE_URL + "/course/editSection",
+
+    // API for subsection
     CREATE_SUBSECTION_API: BASE_URL + "/course/createSubsection",
-    EDIT_SECTION_API: BASE_URL + "/course/editSection"
+    EDIT_SUBSECTION_API: BASE_URL + "/course/editSubsection",
+    DELETE_SUBSECTION_API: BASE_URL + "/course/deleteSubsection",
 }
 
 export const profileEndPoints = {

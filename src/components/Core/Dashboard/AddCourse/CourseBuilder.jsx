@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { IoAddCircleOutline } from "react-icons/io5";
 import {
@@ -6,8 +6,13 @@ import {
   editSection,
 } from "../../../../services/operators/courseDetails";
 import { useDispatch, useSelector } from "react-redux";
-import { setCourse } from "../../../../slices/courseSlice";
+import {
+  setCourse,
+  setEditCourse,
+  setStep,
+} from "../../../../slices/courseSlice";
 import Nestedview from "./Nestedview";
+import { toast } from "react-hot-toast";
 
 export default function CourseBuilder() {
   const [editSectionName, setEditSectionName] = useState(false);
@@ -22,34 +27,59 @@ export default function CourseBuilder() {
     handleSubmit,
     formState: { errors },
     getValues,
+    setValue,
   } = useForm();
 
   const handleOnSubmit = async (Data) => {
     if (editSectionName) {
-      // const section = course.section.filter((data) => data._id === idOfEditSection);
-      // console.log("Edit section details: ", section);
-
       if (nameOfEditSection !== Data.sectionName) {
-        const response = await editSection(idOfEditSection, Data.sectionName, token);
+        const response = await editSection(
+          idOfEditSection,
+          Data.sectionName,
+          token
+        );
 
         const updatedSection = course.section.map((section) =>
-          section._id === response?.data?.data._id ? response?.data?.data : section
+          section._id === response?.data?.data._id
+            ? response?.data?.data
+            : section
         );
         const updatedCourse = { ...course, section: updatedSection };
         dispatch(setCourse(updatedCourse));
-        setEditSectionName(false);
+        setEditSectionName(null);
+        setValue("sectionName", "");
       }
-    }
-    else {
-      const result = await createSection(Data?.sectionName, course._id, token);
+    } else {
+      const result = await createSection(
+        { sectionName: Data?.sectionName, courseId: course._id },
+        token
+      );
       dispatch(setCourse(result));
+      setValue("sectionName", "");
     }
-  }
+  };
 
   const handleChangedSectionName = async (sectionId, sectionName) => {
     setEditSectionName(true);
     setIdOfEditSection(sectionId);
     setNameOfEditSection(sectionName);
+  };
+
+  const goBack = () => {
+    dispatch(setStep(1));
+    dispatch(setEditCourse(true));
+  };
+
+  const goNext = () => {
+    if(course.section.length === 0) {
+      toast.error("Please add atleast one Section");
+      return
+    }
+    if(course.section.some((section) => section.subsection.length === 0)) {
+      toast.error("Pleast add minimum one Lecture");
+      return;
+    }
+    dispatch(setStep(3));
   };
 
   return (
@@ -88,9 +118,28 @@ export default function CourseBuilder() {
             {editSectionName ? "Edit Section Name" : "Create Section"}
           </button>
         </form>
+
         {course.section?.length > 0 && (
           <Nestedview handleChangedSectionName={handleChangedSectionName} />
         )}
+
+        <div className="flex justify-between mt-10">
+          <div></div>
+          <div className="flex gap-x-3">
+            <button
+              onClick={goBack}
+              className="gap-x-2 w-[139px] h-[48px] rounded-lg bg-richblack-700 text-richblack-5 flex items-center justify-center font-semibold"
+            >
+              Back
+            </button>
+            <button
+              onClick={goNext}
+              className="gap-x-2 w-[139px] h-[48px] rounded-lg bg-yellow-50 text-richblack-900 flex items-center justify-center font-semibold"
+            >
+              Next
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

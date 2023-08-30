@@ -1,10 +1,10 @@
 const Course = require("../models/Course");
 const Section = require("../models/Section");
+const Subsection = require("../models/Subsection");
 
 exports.createSection = async (req, res) => {
   try {
     const { sectionName, courseId } = req.body;
-
     if (!sectionName || !courseId) {
       return res.status(404).json({
         success: false,
@@ -21,15 +21,13 @@ exports.createSection = async (req, res) => {
       {
         $push: { section: section._id },
       },
-      { new: true }
-    )
+      { new: true })
       .populate({
         path: "section",
         populate: {
           path: "subsection",
         },
-      })
-      .exec();
+      }).exec();
 
     return res.status(200).json({
       success: true,
@@ -61,18 +59,61 @@ exports.editSection = async (req, res) => {
         sectionName: sectionName,
       },
       { new: true }
-    );
+    ).populate("subsection");
 
     return res.status(200).json({
       success: true,
       message: "Section name edited successfully",
-      data: newSection
-    })
+      data: newSection,
+    });
   } catch (error) {
-    console.log("Error in editSection function in Section controller")
+    console.log("Error in editSection function in Section controller");
     return res.status(500).json({
       success: false,
-      message: "Section name could not edit"
-    })
+      message: "Section name could not edit",
+    });
+  }
+};
+
+exports.deleteSection = async (req, res) => {
+  try {
+    const { sectionId, courseId } = req.body;
+
+    const section = await Section.findById(sectionId);
+    if (!section) {
+      return res.status(404).json({
+        success: false,
+        message: "Section not found",
+      });
+    }
+
+    await Subsection.deleteMany({ _id: { $in: section.subsection } });
+
+    await Section.findByIdAndDelete(sectionId);
+
+    const result = await Course.findByIdAndUpdate(
+      courseId,
+      {
+        $pull: { section: sectionId },
+      },
+      { new: true }
+    ).populate({
+      path: "section",
+      populate: {
+        path: "subsection",
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Section deleted successfully",
+      data: result,
+    });
+  } catch (error) {
+    console.log("Error while deleting Section in section coltroller: ", error);
+    return res.status(500).json({
+      success: false,
+      message: "Section could not delete",
+    });
   }
 };

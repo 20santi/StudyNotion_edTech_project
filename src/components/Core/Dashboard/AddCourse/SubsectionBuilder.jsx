@@ -1,39 +1,105 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Upload from "./Upload";
-import { createSubsection } from "../../../../services/operators/courseDetails";
-import { useSelector } from "react-redux";
+import {
+  createSubsection,
+  editSubsection,
+} from "../../../../services/operators/courseDetails";
+import { useDispatch, useSelector } from "react-redux";
 import { setCourse } from "../../../../slices/courseSlice";
+import { setLoading } from "../../../../slices/authSlice";
 
-export default function SubsectionBuilder({ setShowModal, sectionId, course }) {
+export default function SubsectionBuilder({
+  modalData,
+  setModalData,
+  add = false,
+  edit = false,
+  view = false,
+}) {
   const {
     register,
     formState: { errors },
     setValue,
+    getValues,
     handleSubmit,
   } = useForm();
 
-  const { token } = useSelector((state) => state.auth);
+  const { token, loading } = useSelector((state) => state.auth);
+  const { course } = useSelector((state) => state.course);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (view || edit) {
+      setValue("video", modalData.video);
+      setValue("title", modalData.title);
+      setValue("description", modalData.description);
+    }
+  }, []);
+
+  const isFormUpdated = (currentValues) => {
+    if (
+      currentValues.video !== modalData.video ||
+      currentValues.title !== modalData.title ||
+      currentValues.description !== modalData.description
+    ) {
+      return true;
+    }
+    return false;
+  };
 
   const handleOnSubmit = async (data) => {
-    const result = await createSubsection(data, sectionId, token);
-    if (result) {
-      const updatedSection = course.section.map((section) =>
-        section._id === sectionId ? result : section
-      );
-      const updateCourse = { ...course, section: updatedSection };
-      setCourse(updateCourse);
-      console.log("Course: ", course);
-    }
+    const formData = new FormData();
+    const currentValues = getValues();
+    dispatch(setLoading(true));
+    if (edit) {
+      if (isFormUpdated(currentValues)) {
+        if (currentValues.video !== modalData.video) {
+          formData.append("video", data.video);
+        }
+        if (currentValues.title !== modalData.title) {
+          formData.append("title", data.title);
+        }
+        if (currentValues.description !== modalData.description) {
+          formData.append("description", data.description);
+        }
 
-    setShowModal(false);
+        formData.append("sectionId", modalData.sectionId);
+        formData.append("subsectionId", modalData._id);
+
+        const result = await editSubsection(formData, token);
+        const updatedSection = course.section.map((section) =>
+          section._id === result?.data?.data._id ? result?.data?.data : section
+        );
+
+        const updateCourse = { ...course, section: updatedSection };
+        dispatch(setCourse(updateCourse));
+        setModalData(null);
+      }
+    } else {
+      formData.append("video", data.video);
+      formData.append("title", data.title);
+      formData.append("description", data.description);
+      formData.append("sectionId", modalData);
+      const result = await createSubsection(formData, token);
+      if (result) {
+        const updatedSection = course.section.map((section) =>
+          section._id === modalData ? result : section
+        );
+        const updateCourse = { ...course, section: updatedSection };
+        dispatch(setCourse(updateCourse));
+      }
+      setModalData(null);
+    }
+    dispatch(setLoading(false));
   };
 
   return (
-    <div className="fixed inset-0 backdrop-blur-sm bg-black/40 z-[1000] flex items-center justify-center">
-      <div className="lg:w-[665px] bg-richblack-800 rounded-lg">
+    <div className="fixed inset-0 backdrop-blur-sm bg-black/40 z-[1000] overflow-auto grid place-items-center">
+      <div className="lg:w-[665px] bg-richblack-800 rounded-lg mt-10 mb-10">
         <div className="bg-richblack-700 border rounded-lg border-richblack-600 p-5 text-[18px] leading-[26px] font-semibold">
-          Add Lecture
+          {view && "View Lecture"}
+          {edit && "Edit Lecture"}
+          {add && "Add Lecture"}
         </div>
 
         <form
@@ -47,9 +113,11 @@ export default function SubsectionBuilder({ setShowModal, sectionId, course }) {
             errors={errors}
             setValue={setValue}
             video={true}
+            viewData={view ? modalData.videoUrl : null}
+            editData={edit ? modalData.videoUrl : null}
           />
 
-          <div className="flex flex-col mt-24">
+          <div className="flex flex-col">
             <label htmlFor="title">
               Lecture Title <span className=" text-pink-300">*</span>
             </label>
@@ -83,16 +151,18 @@ export default function SubsectionBuilder({ setShowModal, sectionId, course }) {
             <div></div>
             <div className="flex gap-x-3">
               <button
-                onClick={() => setShowModal(false)}
+                onClick={() => setModalData(null)}
+                disabled={loading}
                 className="gap-x-2 w-[139px] h-[48px] rounded-lg bg-richblack-700 text-richblack-5 flex items-center justify-center font-semibold"
               >
                 Cancell
               </button>
               <button
                 type="submit"
+                disabled={loading}
                 className="gap-x-2 w-[139px] h-[48px] rounded-lg bg-yellow-50 text-richblack-900 flex items-center justify-center font-semibold"
               >
-                Save
+                {loading ? "Loading..." : "Save"}
               </button>
             </div>
           </div>

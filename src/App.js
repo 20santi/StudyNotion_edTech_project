@@ -49,10 +49,15 @@ function App() {
         >
           <Route path="dashboard/my-profile" element={<MyProfile />} />
           <Route path="dashboard/settings" element={<Setting />} />
-          <Route
-            path="dashboard/enrolled-courses"
-            element={<EnrolledCourses />}
-          />
+
+          {token && user.accountType === "Student" && (
+            <>
+              <Route
+                path="dashboard/enrolled-courses"
+                element={<EnrolledCourses />}
+              />
+            </>
+          )}
 
           {token && user.accountType === "Instructor" && (
             <>

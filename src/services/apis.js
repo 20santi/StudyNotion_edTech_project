@@ -12,6 +12,7 @@ export const endPoints = {
 export const courseEndPoints = {
     // API for course
     SHOW_ALL_CATEGORY_API: BASE_URL + "/course/showAllCategory",
+    FETCH_CATEGORY_DETAILS: BASE_URL + "/course/fetchCategory",
     CREATE_COURSE_API: BASE_URL + "/course/createCourse",
     EDIT_COURSE_API: BASE_URL + "/course/editCourse",
     FETCH_COURSE_DETAILS_API: BASE_URL + "/course/fetchCourse",
